@@ -30,6 +30,8 @@ draw(cities)
 
 collecting = True
 
+print("test1")
+
 while collecting:
 	for event in pygame.event.get():
 		if event.type == QUIT:
@@ -39,6 +41,8 @@ while collecting:
 		elif event.type == MOUSEBUTTONDOWN:
 			cities.append(pygame.mouse.get_pos())
 			draw(cities)
+
+print("test2")
 			
 screen.fill(0)
 pygame.draw.lines(screen,city_color,True,cities)

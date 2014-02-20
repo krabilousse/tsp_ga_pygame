@@ -3,8 +3,9 @@
 import sys
 import re
 import random
+import pygame
+from pygame.locals import KEYDOWN, QUIT, MOUSEBUTTONDOWN, K_RETURN, K_ESCAPE
 from datetime import datetime
-
 from math import sqrt, pow
 
 class City(object):
@@ -56,6 +57,34 @@ cities=[]
 N=1024
 population=[]
 intermediatePopulation=[]
+
+def draw(screen):
+	colorCircle=(10,10,200)
+	radiusCircle=3
+	
+	screen.fill(0)
+	for city in cities:
+		pygame.draw.circle(screen,colorCircle,(city.x,city.y),radiusCircle)
+		pygame.display.flip()
+
+def requestCities():
+	width=500
+	height=500
+	pygame.init()
+	window=pygame.display.set_mode((width,height))
+	screen=pygame.display.get_surface()
+	
+	flag=True
+	while flag:
+		for event in pygame.event.get():
+			if event.type == QUIT:
+				sys.exit(0)
+			elif event.type == KEYDOWN and event.key == K_RETURN:
+				flag=False
+			elif event.type == MOUSEBUTTONDOWN:
+				x,y=pygame.mouse.get_pos()
+				cities.append(City("v%d"%(len(cities)),x,y))
+				draw(screen)
 
 def initPopulation():
 	# 0 à N
@@ -147,7 +176,8 @@ def mutate():
 def ga_solve(file=None,gui=True,maxtime=0):
 	if file==None:
 		# afficher l'interface pour récupérer les points (x, y)
-		pass
+		# fonction bloquante
+		requestCities()
 	else:
 		# lecture du fichier
 		f=open(file,'r')
@@ -158,46 +188,46 @@ def ga_solve(file=None,gui=True,maxtime=0):
 			ligneSplited=ligne.split()
 			cities.append(City(ligneSplited[0],float(ligneSplited[1]),float(ligneSplited[2])))
 		
-		#for city in cities:
-		#	print(city)
+	#for city in cities:
+	#	print(city)
 		
-		# initialisation de la population initiale
-		initPopulation()
+	# initialisation de la population initiale
+	initPopulation()
 		
-		select()
-		cross()
-		mutate()
+	select()
+	cross()
+	mutate()
 
-		population = []
-		for i in intermediatePopulation:
-			population.append(i)
+	population = []
+	for i in intermediatePopulation:
+		population.append(i)
 
-		sorted_pop = sorted(population, key=lambda individual: individual.distance)
+	sorted_pop = sorted(population, key=lambda individual: individual.distance)
 
-		elite = sorted_pop[0]
+	elite = sorted_pop[0]
 
-		#print(sorted_pop[0])
-		print("Elite : ", elite.travel, elite.distance)
+	#print(sorted_pop[0])
+	print("Elite : ", elite.travel, elite.distance)
 
-		startTime=datetime.now()
+	startTime=datetime.now()
 		
-		flag=True
-		#while True:
-		#	
-		#	select()
-		#	cross()
-		#	mutate()
-		#	
-		#	# gestion du temps
-		#	timespan=datetime.now()-startTime
-		#	if timespan.total_seconds()>maxtime:
-		#		flag=False
-		#		
-		#		# recherche du meilleur
-		##		# TODO
-		#	
-		#	if not flag:
-		#		break
+	flag=True
+	#while True:
+	#	
+	#	select()
+	#	cross()
+	#	mutate()
+	#	
+	#	# gestion du temps
+	#	timespan=datetime.now()-startTime
+	#	if timespan.total_seconds()>maxtime:
+	#		flag=False
+	#		
+	#		# recherche du meilleur
+	##		# TODO
+	#	
+	#	if not flag:
+	#		break
 
 if __name__=="__main__":
 	file=None
