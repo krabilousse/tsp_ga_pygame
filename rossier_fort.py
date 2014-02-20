@@ -38,6 +38,11 @@ class Individual(object):
 		
 		self.distance+=sqrt(pow(xb-xa,2)+pow(yb-ya,2))
 
+	def __str__(self):
+		return str(travel)
+
+	def __len__(self):
+
 # une liste d'objet City
 cities=[]
 
@@ -57,8 +62,8 @@ def initPopulation():
 		individual.evaluate()
 		population.append(individual)
 	
-	for individual in population:
-		print("%s, %f"%(individual.travel,individual.distance))
+	#for individual in population:
+	#	print("%s, %f"%(individual.travel,individual.distance))
 		
 
 #def evaluate(individual):
@@ -67,15 +72,59 @@ def initPopulation():
 def select():
 	# Tri de la liste, individus ayant la distance la plus courte en premier.
 	sorted_pop = sorted(population, key=lambda individual: individual.distance)
-	#for i in sorted_pop:
-	#	print(i.distance)
+	for i in sorted_pop:
+		print(i.distance)
 	# On créé un tableau avec la meilleure moitié de la population
-	besthalf_pop = sorted_pop[len(sorted_pop)/2:]
-	intermediatePopulation = besthalf_pop
+	# 
+	besthalf_pop = sorted_pop[int(len(sorted_pop)/2):]
+	for i in besthalf_pop:
+		intermediatePopulation.append(i)
+
 
 def cross():
-	for i in range(0,len(intermediatePopulation)-2):
-		
+	print("len",len(intermediatePopulation))
+	for individual_index in range(0,len(intermediatePopulation)-2):
+		crossover(intermediatePopulation[individual_index],intermediatePopulation[individual_index+1])
+
+def crossover(parent1,parent2):
+	"""
+	Two-point order crossover.
+	"""
+	crossover_point1 = random.randint(0, len(parent1) - 1)
+	crossover_point2 = random.randint(crossover_point1, len(parent1))
+	"""
+	Get a list of items in parent2, starting from crossover_point2, which
+	are not in the middle segment of parent1.
+	"""
+	unused = [x for x in parent2[crossover_point2:] +
+	          parent2[:crossover_point2]
+	          if x not in parent1[crossover_point1:crossover_point2]]
+	"""
+	Copy the middle segment from parent1 to child1, and fill in the empty
+	slots from the unused list, beginning with crossover_point2 and
+	wrapping around to the beginning.
+	"""
+	child1 = (unused[len(parent1) - crossover_point2:] +
+	          parent1[crossover_point1:crossover_point2] +
+	          unused[:len(parent1) - crossover_point2])
+
+	"""
+	Get a list of items in parent1, starting from crossover_point2, which
+	are not in the middle segment of parent2.
+	"""
+	unused = [x for x in parent1[crossover_point2:] +
+	          parent1[:crossover_point2]
+	          if x not in parent2[crossover_point1:crossover_point2]]
+	"""
+	Copy the middle segment from parent1 to child1, and fill in the empty
+	slots from the unused list, beginning with crossover_point2 and
+	wrapping around to the beginning.
+	"""
+	child2 = (unused[len(parent1) - crossover_point2:] +
+	          parent2[crossover_point1:crossover_point2] +
+	          unused[:len(parent1) - crossover_point2])
+
+	print("tits",child1,child2)
 
 def mutate():
 	pass
@@ -100,6 +149,7 @@ def ga_solve(file=None,gui=True,maxtime=0):
 		initPopulation()
 		# boucle
 		select()
+		cross()
 
 if __name__=="__main__":
 	file=None
