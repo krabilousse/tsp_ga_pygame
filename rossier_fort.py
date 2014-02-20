@@ -77,8 +77,21 @@ def cross():
 	for i in range(0,len(intermediatePopulation)-2):
 		
 
+# on choisi deux index aléatoires et croise dans la liste les deux villes représenté par les index
 def mutate():
-	pass
+	for individual in intermediatePopulation:
+		# récupération du voyage
+		travel=individual.travel
+		# index aléatoire 1 (firstIndex)
+		firstIndex=random.randint(0,len(travel))
+		# index aléatoire 2 (secondIndex)
+		secondIndex=random.randint(0,len(travel))
+		
+		# échange des valeurs par rapport au deux index
+		temp=travel[firstIndex]
+		travel[firstIndex]=travel[secondIndex]
+		travel[secondIndex]=temp
+		
 
 def ga_solve(file=None,gui=True,maxtime=0):
 	if file==None:
