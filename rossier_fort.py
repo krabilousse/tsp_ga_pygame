@@ -3,6 +3,8 @@
 import sys
 import re
 import random
+from datetime import datetime
+
 from math import sqrt, pow
 
 class City(object):
@@ -18,7 +20,8 @@ class Individual(object):
 	def __init__(self,travel):
 		self.travel=travel
 		self.distance=0.0
-	
+		self.evaluate()
+
 	def evaluate(self):
 		# distance entre a et b (AB) = sqrt((xb-xa)^2+(yb-ya)^2)
 		for i in range(len(cities)-1):
@@ -39,9 +42,13 @@ class Individual(object):
 		self.distance+=sqrt(pow(xb-xa,2)+pow(yb-ya,2))
 
 	def __str__(self):
-		return str(travel)
+		return str(self.travel)
+
+	def __repr__(self):
+		return "Parcours : " + str(self.travel) + "\nDistance : " + str(self.distance)
 
 	def __len__(self):
+		return len(self.travel)
 
 # une liste d'objet City
 cities=[]
@@ -59,32 +66,25 @@ def initPopulation():
 		random.shuffle(l)
 		# on l'ajoute dans la poplulation initiale des individus
 		individual=Individual(list(l))
-		individual.evaluate()
 		population.append(individual)
 	
 	#for individual in population:
 	#	print("%s, %f"%(individual.travel,individual.distance))
-		
-
-#def evaluate(individual):
-#	pass
 
 def select():
 	# Tri de la liste, individus ayant la distance la plus courte en premier.
 	sorted_pop = sorted(population, key=lambda individual: individual.distance)
-	for i in sorted_pop:
-		print(i.distance)
+
+
 	# On créé un tableau avec la meilleure moitié de la population
-	# 
-	besthalf_pop = sorted_pop[int(len(sorted_pop)/2):]
+	besthalf_pop = sorted_pop[:int(len(sorted_pop)/2)]
 	for i in besthalf_pop:
 		intermediatePopulation.append(i)
 
 
 def cross():
-	print("len",len(intermediatePopulation))
 	for individual_index in range(0,len(intermediatePopulation)-2):
-		crossover(intermediatePopulation[individual_index],intermediatePopulation[individual_index+1])
+		crossover(intermediatePopulation[individual_index].travel,intermediatePopulation[individual_index+1].travel)
 
 def crossover(parent1,parent2):
 	"""
@@ -124,10 +124,25 @@ def crossover(parent1,parent2):
 	          parent2[crossover_point1:crossover_point2] +
 	          unused[:len(parent1) - crossover_point2])
 
-	print("tits",child1,child2)
+	#print("tits",crossover_point1,crossover_point2,parent1,parent2,child1,child2)
+	intermediatePopulation.append(Individual(child1))
+	intermediatePopulation.append(Individual(child2))
 
+# on choisi deux index aléatoires et croise dans la liste les deux villes représenté par les index
 def mutate():
-	pass
+	for individual in intermediatePopulation:
+		# récupération du voyage
+		travel=individual.travel
+		# index aléatoire 1 (firstIndex)
+		firstIndex=random.randint(0,len(travel)-1)
+		# index aléatoire 2 (secondIndex)
+		secondIndex=random.randint(0,len(travel)-1)
+		
+		# échange des valeurs par rapport au deux index
+		temp=travel[firstIndex]
+		travel[firstIndex]=travel[secondIndex]
+		travel[secondIndex]=temp
+		
 
 def ga_solve(file=None,gui=True,maxtime=0):
 	if file==None:
@@ -143,13 +158,46 @@ def ga_solve(file=None,gui=True,maxtime=0):
 			ligneSplited=ligne.split()
 			cities.append(City(ligneSplited[0],float(ligneSplited[1]),float(ligneSplited[2])))
 		
-		for city in cities:
-			print(city)
-			
+		#for city in cities:
+		#	print(city)
+		
+		# initialisation de la population initiale
 		initPopulation()
-		# boucle
+		
 		select()
 		cross()
+		mutate()
+
+		population = []
+		for i in intermediatePopulation:
+			population.append(i)
+
+		sorted_pop = sorted(population, key=lambda individual: individual.distance)
+
+		elite = sorted_pop[0]
+
+		#print(sorted_pop[0])
+		print("Elite : ", elite.travel, elite.distance)
+
+		startTime=datetime.now()
+		
+		flag=True
+		#while True:
+		#	
+		#	select()
+		#	cross()
+		#	mutate()
+		#	
+		#	# gestion du temps
+		#	timespan=datetime.now()-startTime
+		#	if timespan.total_seconds()>maxtime:
+		#		flag=False
+		#		
+		#		# recherche du meilleur
+		##		# TODO
+		#	
+		#	if not flag:
+		#		break
 
 if __name__=="__main__":
 	file=None
