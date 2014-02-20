@@ -3,6 +3,8 @@
 import sys
 import re
 import random
+import datetime
+
 from math import sqrt, pow
 
 class City(object):
@@ -109,10 +111,29 @@ def ga_solve(file=None,gui=True,maxtime=0):
 		
 		for city in cities:
 			print(city)
-			
+		
+		# initialisation de la population initiale
 		initPopulation()
-		# boucle
-		select()
+		
+		startTime=datetime.now()
+		
+		flag=True
+		while True:
+			
+			select()
+			cross()
+			mutate()
+			
+			# gestion du temps
+			timespan=datetime.now()-startTime
+			if timespan.total_seconds()>maxtime:
+				flag=False
+				
+				# recherche du meilleur
+				# TODO
+			
+			if not flag:
+				break
 
 if __name__=="__main__":
 	file=None
