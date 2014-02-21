@@ -5,6 +5,7 @@ import copy
 import re
 import random
 import pygame
+import time
 from pygame.locals import KEYDOWN, QUIT, MOUSEBUTTONDOWN, K_RETURN, K_ESCAPE
 from datetime import datetime
 from math import sqrt, pow
@@ -51,6 +52,15 @@ class Individual(object):
 
 	def __len__(self):
 		return len(self.travel)
+
+# Test si deux individus sont identiques
+def equals(individualA,individualB):
+	individualTravelA=individualA.travel
+	individualTravelB=individualB.travel
+	for cityA,cityB in zip(individualTravelA,individualTravelB):
+		if cityA!=cityB:
+			return False
+	return True
 
 # une liste d'objet City
 cities=[]
@@ -194,6 +204,8 @@ def mutate():
 		travel[firstIndex]=travel[secondIndex]
 		travel[secondIndex]=temp
 		
+		individual.evaluate()
+		
 
 def ga_solve(file=None,gui=True,maxtime=0):
 	if file==None:
@@ -214,19 +226,25 @@ def ga_solve(file=None,gui=True,maxtime=0):
 	initPopulation()
 	startTime=datetime.now()
 	
+	# mémorise le meilleur individu précédent
+	previousElite=None
+	# compteur incrémenté si l'élite revient plusieurs fois de suite
+	previousEliteCounter=0
+	
 	counter=0
 	flag=True
 	while True:
 		# debug
-		print("Population size = %d"%len(population))
-		print("Intermediate population size = %d"%len(intermediatePopulation))
+		# print("Population size = %d"%len(population))
+		# print("Intermediate population size = %d"%len(intermediatePopulation))
 		# fin debug
 		
 		select()
 		cross()
 		mutate()
-		print("Population size = %d"%len(population))
-		print("Intermediate population size = %d"%len(intermediatePopulation))
+		
+		# print("Population size = %d"%len(population))
+		# print("Intermediate population size = %d"%len(intermediatePopulation))
 		# gestion du temps
 		timespan=datetime.now()-startTime
 		if timespan.total_seconds()>maxtime:
@@ -237,9 +255,28 @@ def ga_solve(file=None,gui=True,maxtime=0):
 		
 		del intermediatePopulation[:]
 
+		# recherche du meilleur
 		sorted_pop = sorted(population, key=lambda individual: individual.distance)
-
 		elite = sorted_pop[0]
+		
+		print("elite[0] %s %s"%(str(sorted_pop[0].distance),str(sorted_pop[0].travel)))
+		print("elite[-1] %s",str(sorted_pop[-1].distance))
+		
+		# print("previousEliteCounter: %d",previousEliteCounter)
+		
+		# Test si l'élite revient 10x de suite
+		if previousElite is not None:
+			if equals(elite,previousElite):
+				previousEliteCounter+=1
+				
+				if previousEliteCounter>99:
+					flag=False
+			else:
+				previousEliteCounter=0
+		
+		# time.sleep(1)
+		
+		previousElite=elite
 		
 		# afficher le résultat
 		if gui:
