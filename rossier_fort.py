@@ -244,6 +244,7 @@ def ga_solve(file=None,gui=True,maxtime=0):
 			flag=False
 			
 		# recherche du meilleur
+		global population
 		population = []
 		for i in intermediatePopulation:
 			population.append(i)
@@ -290,8 +291,14 @@ Parameters : \n \
 	--no-gui : start without the GUI\n \
 	--max-time <time in ms>: how long should the algorithm run \n \
 ")
-	
-	ga_solve(file,gui,maxtime)
+	try:
+		ga_solve(file,gui,maxtime)
+	except KeyboardInterrupt:
+		try:
+			population[0]
+			sys.exit("Elite at stop time : ", population[0])
+		except:
+			sys.exit("Tits")
 
 	
 	print("file %s"%file)
