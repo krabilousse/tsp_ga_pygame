@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
+import copy
 import re
 import random
 import pygame
@@ -64,9 +65,11 @@ window=None
 screen=None
 font=pygame.font.Font(None,30)
 
-def drawText(screen,text,textColor):
+def drawText(screen,text,x,y,textColor):
 	t=font.render(text,True,textColor)
 	textRect=t.get_rect()
+	textRect.left=x
+	textRect.top=y
 	screen.blit(t,textRect)
 
 def drawSolution(screen,citiesIndex):
@@ -131,7 +134,7 @@ def select():
 
 
 def cross():
-	for individual_index in range(0,len(intermediatePopulation)-2):
+	for individual_index in range(0,len(intermediatePopulation),2):
 		crossover(intermediatePopulation[individual_index].travel,intermediatePopulation[individual_index+1].travel)
 
 def crossover(parent1,parent2):
@@ -206,48 +209,33 @@ def ga_solve(file=None,gui=True,maxtime=0):
 		for ligne in lignes:
 			ligneSplited=ligne.split()
 			cities.append(City(ligneSplited[0],float(ligneSplited[1]),float(ligneSplited[2])))
-		
-	#for city in cities:
-	#	print(city)
-		
+	
 	# initialisation de la population initiale
 	initPopulation()
-		
-	# select()
-	# cross()
-	# mutate()
-
-	# population = []
-	# for i in intermediatePopulation:
-		# population.append(i)
-
-	# sorted_pop = sorted(population, key=lambda individual: individual.distance)
-
-	# elite = sorted_pop[0]
-
-	#print(sorted_pop[0])
-	# print("Elite : ", elite.travel, elite.distance)
-
 	startTime=datetime.now()
 	
 	counter=0
 	flag=True
 	while True:
+		# debug
+		print("Population size = %d"%len(population))
+		print("Intermediate population size = %d"%len(intermediatePopulation))
+		# fin debug
 		
 		select()
 		cross()
 		mutate()
-		
+		print("Population size = %d"%len(population))
+		print("Intermediate population size = %d"%len(intermediatePopulation))
 		# gestion du temps
 		timespan=datetime.now()-startTime
 		if timespan.total_seconds()>maxtime:
 			flag=False
 			
-		# recherche du meilleur
-		global population
-		population = []
-		for i in intermediatePopulation:
-			population.append(i)
+		for idx,el in enumerate(intermediatePopulation):
+			population[idx] = el
+		
+		del intermediatePopulation[:]
 
 		sorted_pop = sorted(population, key=lambda individual: individual.distance)
 
@@ -263,7 +251,8 @@ def ga_solve(file=None,gui=True,maxtime=0):
 			screen.fill(0)
 			drawSolution(screen,elite.travel)
 			pygame.draw.lines(screen,(10,10,200),True,path)
-			drawText(screen,str(counter),(255,255,255))
+			drawText(screen,str(counter)+" iterations",0,0,(255,255,255))
+			drawText(screen,str(timespan),0,30,(255,255,255))
 			pygame.display.flip()
 		
 		counter+=1
