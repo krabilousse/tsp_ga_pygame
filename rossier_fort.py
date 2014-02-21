@@ -58,7 +58,27 @@ N=1024
 population=[]
 intermediatePopulation=[]
 
-def draw(screen):
+# GUI
+pygame.init()
+window=None
+screen=None
+font=pygame.font.Font(None,30)
+
+def drawText(screen,text,textColor):
+	t=font.render(text,True,textColor)
+	textRect=t.get_rect()
+	screen.blit(t,textRect)
+
+def drawSolution(screen,citiesIndex):
+	colorCircle=(10,10,200)
+	radiusCircle=3
+	
+	screen.fill(0)
+	for cityIndex in citiesIndex:
+		pygame.draw.circle(screen,colorCircle,(cities[cityIndex].x,cities[cityIndex].y),radiusCircle)
+		pygame.display.flip()
+
+def drawCities(screen):
 	colorCircle=(10,10,200)
 	radiusCircle=3
 	
@@ -70,7 +90,6 @@ def draw(screen):
 def requestCities():
 	width=500
 	height=500
-	pygame.init()
 	window=pygame.display.set_mode((width,height))
 	screen=pygame.display.get_surface()
 	
@@ -84,7 +103,7 @@ def requestCities():
 			elif event.type == MOUSEBUTTONDOWN:
 				x,y=pygame.mouse.get_pos()
 				cities.append(City("v%d"%(len(cities)),x,y))
-				draw(screen)
+				drawCities(screen)
 
 def initPopulation():
 	# 0 à N
@@ -153,7 +172,7 @@ def crossover(parent1,parent2):
 	          parent2[crossover_point1:crossover_point2] +
 	          unused[:len(parent1) - crossover_point2])
 
-	#print("tits",crossover_point1,crossover_point2,parent1,parent2,child1,child2)
+	#print("test",crossover_point1,crossover_point2,parent1,parent2,child1,child2)
 	intermediatePopulation.append(Individual(child1))
 	intermediatePopulation.append(Individual(child2))
 
@@ -194,40 +213,62 @@ def ga_solve(file=None,gui=True,maxtime=0):
 	# initialisation de la population initiale
 	initPopulation()
 		
-	select()
-	cross()
-	mutate()
+	# select()
+	# cross()
+	# mutate()
 
-	population = []
-	for i in intermediatePopulation:
-		population.append(i)
+	# population = []
+	# for i in intermediatePopulation:
+		# population.append(i)
 
-	sorted_pop = sorted(population, key=lambda individual: individual.distance)
+	# sorted_pop = sorted(population, key=lambda individual: individual.distance)
 
-	elite = sorted_pop[0]
+	# elite = sorted_pop[0]
 
 	#print(sorted_pop[0])
-	print("Elite : ", elite.travel, elite.distance)
+	# print("Elite : ", elite.travel, elite.distance)
 
 	startTime=datetime.now()
-		
+	
+	counter=0
 	flag=True
-	#while True:
-	#	
-	#	select()
-	#	cross()
-	#	mutate()
-	#	
-	#	# gestion du temps
-	#	timespan=datetime.now()-startTime
-	#	if timespan.total_seconds()>maxtime:
-	#		flag=False
-	#		
-	#		# recherche du meilleur
-	##		# TODO
-	#	
-	#	if not flag:
-	#		break
+	while True:
+		
+		select()
+		cross()
+		mutate()
+		
+		# gestion du temps
+		timespan=datetime.now()-startTime
+		if timespan.total_seconds()>maxtime:
+			flag=False
+			
+		# recherche du meilleur
+		population = []
+		for i in intermediatePopulation:
+			population.append(i)
+
+		sorted_pop = sorted(population, key=lambda individual: individual.distance)
+
+		elite = sorted_pop[0]
+		
+		# afficher le résultat
+		if gui:
+			path=[]
+			for cityIndex in elite.travel:
+				path.append((cities[cityIndex].x,cities[cityIndex].y))
+			
+			screen=pygame.display.get_surface()
+			screen.fill(0)
+			drawSolution(screen,elite.travel)
+			pygame.draw.lines(screen,(10,10,200),True,path)
+			drawText(screen,str(counter),(255,255,255))
+			pygame.display.flip()
+		
+		counter+=1
+	
+		if not flag:
+			break
 
 if __name__=="__main__":
 	file=None
