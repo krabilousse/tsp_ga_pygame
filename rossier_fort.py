@@ -191,7 +191,12 @@ def crossover(parent1,parent2):
 
 # on choisi deux index aléatoires et croise dans la liste les deux villes représenté par les index
 def mutate():
-	for individual in intermediatePopulation:
+
+	indices = list(range(0,len(intermediatePopulation)))
+	random.shuffle(indices)
+
+	for i in indices[:int(len(intermediatePopulation)/10)]:
+		individual = intermediatePopulation[i]
 		# récupération du voyage
 		travel=individual.travel
 		# index aléatoire 1 (firstIndex)
