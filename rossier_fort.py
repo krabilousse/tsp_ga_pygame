@@ -66,7 +66,7 @@ def equals(individualA,individualB):
 # une liste d'objet City
 cities=[]
 
-N=100
+N=2000
 population=[]
 intermediatePopulation=[]
 
@@ -89,7 +89,7 @@ def drawSolution(screen,citiesIndex):
 	
 	screen.fill(0)
 	for cityIndex in citiesIndex:
-		pygame.draw.circle(screen,colorCircle,(cities[cityIndex].x,cities[cityIndex].y),radiusCircle)
+		pygame.draw.circle(screen,colorCircle,(int(cities[cityIndex].x),int(cities[cityIndex].y)),radiusCircle)
 		pygame.display.flip()
 
 def drawCities(screen):
@@ -298,6 +298,9 @@ def ga_solve(file=None,gui=True,maxtime=0):
 			path=[]
 			for cityIndex in elite.travel:
 				path.append((cities[cityIndex].x,cities[cityIndex].y))
+				
+			if file!=None:
+				window=pygame.display.set_mode((500,500))
 			
 			screen=pygame.display.get_surface()
 			screen.fill(0)
