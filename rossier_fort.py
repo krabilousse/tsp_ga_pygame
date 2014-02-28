@@ -66,7 +66,7 @@ def equals(individualA,individualB):
 # une liste d'objet City
 cities=[]
 
-N=100
+N=1000
 population=[]
 intermediatePopulation=[]
 
