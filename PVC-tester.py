@@ -27,13 +27,11 @@ modules = (
 # <datafile> est le fichier contenant les données du problème et
 # <maxtime> le temps (en secondes) imparti pour la résolution
 tests = (
-    ('cities.txt',10),
-    #~ ('data/pb010.txt',5),
-    #~ ('data/pb010.txt',10),
-    #~ ('data/pb050.txt',30),
-    #~ ('data/pb050.txt',60),
-    #~ ('data/pb100.txt',20),
-    #~ ('data/pb100.txt',90),
+    ('data/pb010.txt',5),
+    ('data/pb050.txt',30),
+    ('data/pb050.txt',60),
+    ('data/pb100.txt',20),
+    ('data/pb100.txt',90),
 )
 
 # On tolère un dépassement de 5% du temps imparti:
@@ -46,7 +44,7 @@ outfile = sys.stdout
 #outfile = open('results.csv', 'w')
 
 # affichage à la console d'informations d'avancement?
-verbose = False
+verbose = True
 
 # est-ce qu'on veut un affichage graphique?
 gui = False
@@ -58,6 +56,7 @@ gui = False
 import os
 from time import time
 from math import hypot
+import traceback
 
 def dist(c1,c2):
     x1,y1=c1[0],c1[1]
@@ -136,6 +135,7 @@ if __name__ == '__main__':
                 length, path = solvers[m](filename, gui, maxtime)
                 duration = time()-start
             except Exception as e:
+                    print(traceback.format_exc())
                     outfile.write("%r;" % e)
             except SystemExit:
                 outfile.write("tried to quit!;")

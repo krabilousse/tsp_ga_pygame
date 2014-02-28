@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
-# Développeurs:
+# DÃ©veloppeurs:
 # -> Matthieu Rossier, INF3B-DLM
 # -> Danick Fort, INF3B-DLM
 # ALGORITHME GENETIQUE - Intelligence Artificielle - He-Arc
 
-# version de python utilisé: python 3.3.0
+# version de python utilisÃ©: python 3.3.0
 
 import sys
 import copy
@@ -17,7 +17,7 @@ from pygame.locals import KEYDOWN, QUIT, MOUSEBUTTONDOWN, K_RETURN, K_ESCAPE
 from datetime import datetime
 from math import hypot
 
-# Représente une ville, une ville est cractèrisé par
+# ReprÃ©sente une ville, une ville est cractÃ¨risÃ© par
 # -> un nom de ville
 # -> une position (x, y)
 class City(object):
@@ -26,12 +26,12 @@ class City(object):
 		self.name=name
 		self.x=x
 		self.y=y
-	# Permet d'afficher à l'écran une ville
+	# Permet d'afficher Ã  l'Ã©cran une ville
 	def __str__(self):
 		return "Name = %s, (%f, %f)"%(self.name,self.x,self.y)
 
-# Représente un individu dans une popupalation, un individu est caractérisé par
-# -> un "voyage": une liste d'index d'object "City". Les objets "City" sont stocké dans la variable globale "cities"
+# ReprÃ©sente un individu dans une popupalation, un individu est caractÃ©risÃ© par
+# -> un "voyage": une liste d'index d'object "City". Les objets "City" sont stockÃ© dans la variable globale "cities"
 # -> la distance du voyage
 class Individual(object):
 	# Constructeur
@@ -39,7 +39,7 @@ class Individual(object):
 		self.travel=travel
 		self.distance=0.0
 		self.evaluate()
-	# méthodue qui calcul la distance du "voyage"
+	# mÃ©thodue qui calcul la distance du "voyage"
 	def evaluate(self):
 		# distance entre a et b (AB) = sqrt((xb-xa)^2+(yb-ya)^2)
 		for i in range(len(cities)-1):
@@ -51,7 +51,7 @@ class Individual(object):
 			# distance entre deux villes (AB)
 			self.distance+=hypot(xb-xa,yb-ya)
 		
-		# revenir au point de départ à la fin
+		# revenir au point de dÃ©part Ã  la fin
 		xa=cities[self.travel[-1]].x
 		ya=cities[self.travel[-1]].y
 		xb=cities[self.travel[0]].x
@@ -76,23 +76,23 @@ def equals(individualA,individualB):
 
 # une liste d'objet City
 cities=[]
-# représente la nombre d'individu dans la population
+# reprÃ©sente la nombre d'individu dans la population
 N=2000
-# représente la population total
+# reprÃ©sente la population total
 population=[]
-# représente la population intermédiaire (après la phase de sélection)
+# reprÃ©sente la population intermÃ©diaire (aprÃ¨s la phase de sÃ©lection)
 intermediatePopulation=[]
 
 # initialisation de la GUI (pygame)
 pygame.init()
-# représente la fenêtre (pygame)
+# reprÃ©sente la fenÃªtre (pygame)
 window=None
-# représenta la zone à dessiner (pygame)
+# reprÃ©senta la zone Ã  dessiner (pygame)
 screen=None
-# initialiser la possibilité de pouvoir dessiner du texte
+# initialiser la possibilitÃ© de pouvoir dessiner du texte
 font=pygame.font.Font(None,30)
 
-# méthode qui permet de dessiner du texte par rapport à des positions
+# mÃ©thode qui permet de dessiner du texte par rapport Ã  des positions
 def drawText(screen,text,x,y,textColor):
 	t=font.render(text,True,textColor)
 	textRect=t.get_rect()
@@ -100,8 +100,8 @@ def drawText(screen,text,x,y,textColor):
 	textRect.top=y
 	screen.blit(t,textRect)
 
-# méthode qui permet de dessiner un voyage d'un individu
-# un cercle représente une ville
+# mÃ©thode qui permet de dessiner un voyage d'un individu
+# un cercle reprÃ©sente une ville
 def drawSolution(screen,citiesIndex):
 	colorCircle=(10,10,200)
 	radiusCircle=3
@@ -111,7 +111,7 @@ def drawSolution(screen,citiesIndex):
 		pygame.draw.circle(screen,colorCircle,(int(cities[cityIndex].x),int(cities[cityIndex].y)),radiusCircle)
 		pygame.display.flip()
 
-# méthode qui dessine les villes d'une solution
+# mÃ©thode qui dessine les villes d'une solution
 def drawCities(screen):
 	colorCircle=(10,10,200)
 	radiusCircle=3
@@ -121,7 +121,7 @@ def drawCities(screen):
 		pygame.draw.circle(screen,colorCircle,(city.x,city.y),radiusCircle)
 		pygame.display.flip()
 
-# démarre une interface GUI qui demande à l'utilisateur de choisir les positions des villes
+# dÃ©marre une interface GUI qui demande Ã  l'utilisateur de choisir les positions des villes
 def requestCities():
 	width=500
 	height=500
@@ -137,52 +137,55 @@ def requestCities():
 			elif event.type == KEYDOWN and event.key == K_RETURN:
 				flag=False
 			elif event.type == MOUSEBUTTONDOWN:
-				# récupère les positions de la souris
+				# rÃ©cupÃ¨re les positions de la souris
 				x,y=pygame.mouse.get_pos()
-				# ajoute une ville à la liste globale
+				# ajoute une ville Ã  la liste globale
 				cities.append(City("v%d"%(len(cities)),x,y))
-				# on dessine les villes à l'écran
+				# on dessine les villes Ã  l'Ã©cran
 				drawCities(screen)
 
-# première phase de l'AG
-# -> on initialise une population aléatoire d'individu
+# premiÃ¨re phase de l'AG
+# -> on initialise une population alÃ©atoire d'individu
 def initPopulation():
-	# 0 à N
+	# on vide population
+	global population
+	population = []
+	# 0 Ã  N
 	# N => nombre d'individus
 	for i in range(N):
-		# On génère la liste des index
+		# On gÃ©nÃ¨re la liste des index
 		l=list(range(len(cities)))
-		# on mélange la liste des index
+		# on mÃ©lange la liste des index
 		random.shuffle(l)
 		# on l'ajoute dans la poplulation initiale des individus
 		individual=Individual(list(l))
 		population.append(individual)
 
-# deuxième phase de l'AG
+# deuxiÃ¨me phase de l'AG
 def select():
 	# tri de la liste, individus ayant la distance la plus courte en premier.
 	sorted_pop = sorted(population, key=lambda individual: individual.distance)
 
 	# la position du milieu de la liste
 	half_point = len(sorted_pop)/2
-	# représente un index
+	# reprÃ©sente un index
 	curr = 0
 	selected_pop = []
 	
-	# ça sélectionne un individu par rapport à l'index "curr"
+	# Ã§a sÃ©lectionne un individu par rapport Ã  l'index "curr"
 	while (len(selected_pop) < half_point):
 		selected_pop.append(sorted_pop[curr])
-		# on fait varier l'index curr "aléatoirement"
-		# ceci est utile pour laisser une chance aux individus "moins bon" ne faisant pas partie de la première partie des meilleurs
+		# on fait varier l'index curr "alÃ©atoirement"
+		# ceci est utile pour laisser une chance aux individus "moins bon" ne faisant pas partie de la premiÃ¨re partie des meilleurs
 		curr = curr + random.randint(1,2)
 
-	# on créé un tableau avec la meilleure moitié de la population
+	# on crÃ©Ã© un tableau avec la meilleure moitiÃ© de la population
 	# selected_pop = sorted_pop[:int(len(sorted_pop)/2)]
 	for i in selected_pop:
 		intermediatePopulation.append(i)
 
-# troisième phase de l'AG
-# l'étape du croisement permet depuis deux parent de donner deux enfants
+# troisiÃ¨me phase de l'AG
+# l'Ã©tape du croisement permet depuis deux parent de donner deux enfants
 # nous avois choisi comme algorithme: croisement par des deux points
 def cross():
 	for individual_index in range(0,len(intermediatePopulation),2):
@@ -192,76 +195,76 @@ def crossover(parent1,parent2):
 	"""
 	croisement sur deux points.
 	"""
-	''' inspiré de https://github.com/mplang/tsp_ga/blob/master/genalg.py '''
+	#inspirÃ© de https://github.com/mplang/tsp_ga/blob/master/genalg.py
 	crossover_point1 = random.randint(0, len(parent1) - 1)
 	crossover_point2 = random.randint(crossover_point1, len(parent1))
 	"""
-	création d'une liste de villes depuis l'individu parent2, commencant à crossover_point2 et finissant à la fin,
+	crÃ©ation d'une liste de villes depuis l'individu parent2, commencant Ã  crossover_point2 et finissant Ã  la fin,
 	qui n'existent pas dans le segment central de parent1
 	"""
 	unused = [x for x in parent2[crossover_point2:] +
 	          parent2[:crossover_point2]
 	          if x not in parent1[crossover_point1:crossover_point2]]
 	"""
-	copie du segment central de parent1 à child1, et remplir les cases vides
-	depuis la liste unused, en commencant par crossover_point2 et en revenant au début
+	copie du segment central de parent1 Ã  child1, et remplir les cases vides
+	depuis la liste unused, en commencant par crossover_point2 et en revenant au dÃ©but
 	"""
 	child1 = (unused[len(parent1) - crossover_point2:] +
 	          parent1[crossover_point1:crossover_point2] +
 	          unused[:len(parent1) - crossover_point2])
 
 	"""
-	création d'une liste de villes depuis parent1, en commencant à crossover_point2,
+	crÃ©ation d'une liste de villes depuis parent1, en commencant Ã  crossover_point2,
 	qui ne sont pas dans le segment central de parent2
 	"""
 	unused = [x for x in parent1[crossover_point2:] +
 	          parent1[:crossover_point2]
 	          if x not in parent2[crossover_point1:crossover_point2]]
 	"""
-	copie du segment central de parent1 à child1, et remplir les cases vides
-	depuis la liste unused, en commencant à crossover_point2 et en revenant
-	au début
+	copie du segment central de parent1 Ã  child1, et remplir les cases vides
+	depuis la liste unused, en commencant Ã  crossover_point2 et en revenant
+	au dÃ©but
 	"""
 	child2 = (unused[len(parent1) - crossover_point2:] +
 	          parent2[crossover_point1:crossover_point2] +
 	          unused[:len(parent1) - crossover_point2])
 
-	# copie de child1 et child2 dans la population intermédiaire
+	# copie de child1 et child2 dans la population intermÃ©diaire
 	intermediatePopulation.append(Individual(child1))
 	intermediatePopulation.append(Individual(child2))
 
-# on choisi deux index aléatoires et croise dans la liste les deux villes représenté par les index
+# on choisi deux index alÃ©atoires et croise dans la liste les deux villes reprÃ©sentÃ© par les index
 def mutate():
-	# mélange des index des individus
+	# mÃ©lange des index des individus
 	indices = list(range(0,len(intermediatePopulation)))
 	random.shuffle(indices)
 
 	# mutation dans 1% des cas
 	for i in indices[:int(len(intermediatePopulation)/100)]:
 		individual = intermediatePopulation[i]
-		# récupération du voyage
+		# rÃ©cupÃ©ration du voyage
 		travel=individual.travel
-		# index aléatoire 1 (firstIndex)
+		# index alÃ©atoire 1 (firstIndex)
 		firstIndex=random.randint(0,len(travel)-1)
-		# index aléatoire 2 (secondIndex)
+		# index alÃ©atoire 2 (secondIndex)
 		secondIndex=random.randint(0,len(travel)-1)
 		
-		# échange des valeurs par rapport au deux index
+		# Ã©change des valeurs par rapport au deux index
 		temp=travel[firstIndex]
 		travel[firstIndex]=travel[secondIndex]
 		travel[secondIndex]=temp
 		
-		# comme l'individu a été muté, il faut recalculer la distance
+		# comme l'individu a Ã©tÃ© mutÃ©, il faut recalculer la distance
 		individual.evaluate()
 		
 # fonction principale du l'algorithme
 def ga_solve(file=None,gui=True,maxtime=0):
-	# si pas de fichier en entrée
+	# si pas de fichier en entrÃ©e
 	if file==None:
-		# afficher l'interface pour récupérer les points (x, y)
+		# afficher l'interface pour rÃ©cupÃ©rer les points (x, y)
 		# fonction bloquante
 		requestCities()
-	# si on a un fichier text en entrée
+	# si on a un fichier text en entrÃ©e
 	else:
 		# lecture du fichier
 		f=open(file,'r')
@@ -281,20 +284,20 @@ def ga_solve(file=None,gui=True,maxtime=0):
 	initPopulation()
 	startTime=datetime.now()
 	
-	# mémorise le meilleur individu précédent
+	# mÃ©morise le meilleur individu prÃ©cÃ©dent
 	previousElite=None
 	elite = None
-	# compteur incrémenté si l'élite revient plusieurs fois de suite
+	# compteur incrÃ©mentÃ© si l'Ã©lite revient plusieurs fois de suite
 	previousEliteCounter=0
 	
 	counter=0
 	flag=True
 	# commence la boucle principale
 	# deux conditions de terminaison
-	# 1) le temps défini par --maxtime
-	# 2) si l'élite revient n fois
+	# 1) le temps dÃ©fini par --maxtime
+	# 2) si l'Ã©lite revient n fois
 	while True:
-		# sélection de la population
+		# sÃ©lection de la population
 		select()
 		# coisement de la population
 		# algorithme croisement sur deux points
@@ -303,12 +306,12 @@ def ga_solve(file=None,gui=True,maxtime=0):
 		# 1% de la population
 		mutate()
 		
-		# timespan représente le durée du temps déjâ passé
+		# timespan reprÃ©sente le durÃ©e du temps dÃ©jÃ¢ passÃ©
 		timespan=datetime.now()-startTime
 		if timespan.total_seconds()>maxtime:
 			flag=False
 		
-		# copie de l population intermiédiare dans la population total
+		# copie de l population intermiÃ©diare dans la population total
 		for idx,el in enumerate(intermediatePopulation):
 			population[idx] = el
 		del intermediatePopulation[:]
@@ -317,20 +320,20 @@ def ga_solve(file=None,gui=True,maxtime=0):
 		sorted_pop = sorted(population, key=lambda individual: individual.distance)
 		elite = sorted_pop[0]
 		
-		# Test si l'élite revient 20x de suite
+		# Test si l'Ã©lite revient 20x de suite
 		numberOfApparition=100
 		if previousElite is not None:
-			# si le elite courant est identique à l'élite précédent
+			# si le elite courant est identique Ã  l'Ã©lite prÃ©cÃ©dent
 			if equals(elite,previousElite):
 				previousEliteCounter+=1
 				if previousEliteCounter>numberOfApparition:
 					flag=False
 			else:
 				previousEliteCounter=0
-		# mémorisation de l'élite précédent
+		# mÃ©morisation de l'Ã©lite prÃ©cÃ©dent
 		previousElite=elite
 		
-		# afficher le résultat
+		# afficher le rÃ©sultat
 		if gui:
 			path=[]
 			for cityIndex in elite.travel:
@@ -353,7 +356,10 @@ def ga_solve(file=None,gui=True,maxtime=0):
 			break
 	
 	# la fonction retourne la liste des noms des ville et "meilleur" distance
-	return elite.distance, [cities[i].name for i in elite.travel]
+	best_travel = [cities[i].name for i in elite.travel]
+
+	del cities[:]
+	return elite.distance, best_travel
 
 if __name__=="__main__":
 	import os
@@ -368,15 +374,15 @@ Parameters : \n \
 	gui=True
 	maxtime=0
 	
-	# il au moins > 1 paramètres
+	# il au moins > 1 paramÃ¨tres
 	if len(sys.argv)>1:
-		# si le dernier paramètre est un nom de fichier valide, alors on le prend comme fichier d'entrée
+		# si le dernier paramÃ¨tre est un nom de fichier valide, alors on le prend comme fichier d'entrÃ©e
 		if os.path.exists(sys.argv[-1]):
 			file=sys.argv[-1]
-		# est-ce que l'utilisateur veut une interface GUI qui affiche les résultats
+		# est-ce que l'utilisateur veut une interface GUI qui affiche les rÃ©sultats
 		if '--nogui' in sys.argv:
 			gui=False
-		# définit le temps maximal que l'algorithme a pour s'exécuter
+		# dÃ©finit le temps maximal que l'algorithme a pour s'exÃ©cuter
 		if '--maxtime' in sys.argv:
 			index=sys.argv.index('--maxtime')
 			try:
