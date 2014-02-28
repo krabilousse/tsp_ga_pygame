@@ -240,7 +240,7 @@ def mutate():
 	random.shuffle(indices)
 
 	# mutation dans 1% des cas
-	for i in indices[:int(len(intermediatePopulation)/100)]:
+	for i in indices[:int(len(intermediatePopulation)/10)]:
 		individual = intermediatePopulation[i]
 		# récupération du voyage
 		travel=individual.travel
