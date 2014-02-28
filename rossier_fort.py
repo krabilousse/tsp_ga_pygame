@@ -156,43 +156,43 @@ def cross():
 
 def crossover(parent1,parent2):
 	"""
-	Two-point order crossover.
+	croisement sur deux points.
 	"""
+	''' inspiré de https://github.com/mplang/tsp_ga/blob/master/genalg.py '''
 	crossover_point1 = random.randint(0, len(parent1) - 1)
 	crossover_point2 = random.randint(crossover_point1, len(parent1))
 	"""
-	Get a list of items in parent2, starting from crossover_point2, which
-	are not in the middle segment of parent1.
+	création d'une liste de villes depuis l'individu parent2, commencant à crossover_point2 et finissant à la fin,
+	qui n'existent pas dans le segment central de parent1
 	"""
 	unused = [x for x in parent2[crossover_point2:] +
 	          parent2[:crossover_point2]
 	          if x not in parent1[crossover_point1:crossover_point2]]
 	"""
-	Copy the middle segment from parent1 to child1, and fill in the empty
-	slots from the unused list, beginning with crossover_point2 and
-	wrapping around to the beginning.
+	copie du segment central de parent1 à child1, et remplir les cases vides
+	depuis la liste unused, en commencant par crossover_point2 et en revenant au début
 	"""
 	child1 = (unused[len(parent1) - crossover_point2:] +
 	          parent1[crossover_point1:crossover_point2] +
 	          unused[:len(parent1) - crossover_point2])
 
 	"""
-	Get a list of items in parent1, starting from crossover_point2, which
-	are not in the middle segment of parent2.
+	création d'une liste de villes depuis parent1, en commencant à crossover_point2,
+	qui ne sont pas dans le segment central de parent2
 	"""
 	unused = [x for x in parent1[crossover_point2:] +
 	          parent1[:crossover_point2]
 	          if x not in parent2[crossover_point1:crossover_point2]]
 	"""
-	Copy the middle segment from parent1 to child1, and fill in the empty
-	slots from the unused list, beginning with crossover_point2 and
-	wrapping around to the beginning.
+	copie du segment central de parent1 à child1, et remplir les cases vides
+	depuis la liste unused, en commencant à crossover_point2 et en revenant
+	au début
 	"""
 	child2 = (unused[len(parent1) - crossover_point2:] +
 	          parent2[crossover_point1:crossover_point2] +
 	          unused[:len(parent1) - crossover_point2])
 
-	#print("test",crossover_point1,crossover_point2,parent1,parent2,child1,child2)
+	# copie de child1 et child2 dans la population intermédiaire
 	intermediatePopulation.append(Individual(child1))
 	intermediatePopulation.append(Individual(child2))
 
@@ -318,7 +318,13 @@ def ga_solve(file=None,gui=True,maxtime=0):
 
 if __name__=="__main__":
 	import os
-	
+
+	instruction_string = "\n \
+rossier_fort.py <cities file>\n \
+Parameters : \n \
+	--nogui : start without the GUI\n \
+	--maxtime <time in ms>: how long should the algorithm run \n \
+"
 	file=None
 	gui=True
 	maxtime=0
@@ -330,23 +336,21 @@ if __name__=="__main__":
 			gui=False
 		if '--maxtime' in sys.argv:
 			index=sys.argv.index('--maxtime')
-			if isinstance(int(sys.argv[index+1]),int):
-				maxtime=int(sys.argv[index+1])
+			try:
+				if isinstance(int(sys.argv[index+1]),int):
+					maxtime=int(sys.argv[index+1])
+			except:
+				sys.exit("Error : --maxtime <integer> need an integer !" + instruction_string)
 	else:
-		sys.exit("Error : you must provide a list of cities in the parameter\n \
-rossier_fort.py <cities file>\n \
-Parameters : \n \
-	--nogui : start without the GUI\n \
-	--maxtime <time in ms>: how long should the algorithm run \n \
-")
+		sys.exit("Error : no parameters provided !" + instruction_string)
+
 	try:
 		ga_solve(file,gui,maxtime)
 	except KeyboardInterrupt:
-		try:
-			population[0]
-			sys.exit("Elite at stop time : ", population[0])
-		except:
-			sys.exit("Exited")
+		sys.exit("Stopped by user!")
+	except:
+		raise
+		sys.exit("ga_solve raised an exception!")
 
 	
 	print("file %s"%file)
