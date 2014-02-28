@@ -315,24 +315,27 @@ def ga_solve(file=None,gui=True,maxtime=0):
 	return elite.distance, [cities[i].name for i in elite.travel]
 
 if __name__=="__main__":
+	import os
+	
 	file=None
 	gui=True
 	maxtime=0
 	
 	if len(sys.argv)>1:
-		if re.search("^[0-9A-Za-z_][0-9A-Za-z_.-][A-Za-z][0-9A-Za-z_.-]+$",sys.argv[-1]):
+		if os.path.exists(sys.argv[-1]):
 			file=sys.argv[-1]
-		if '--no-gui' in sys.argv:
+		if '--nogui' in sys.argv:
 			gui=False
-		if '--max-time' in sys.argv:
-			index=sys.argv.index('--max-time')
-			maxtime=int(sys.argv[index+1])
+		if '--maxtime' in sys.argv:
+			index=sys.argv.index('--maxtime')
+			if isinstance(int(sys.argv[index+1]),int):
+				maxtime=int(sys.argv[index+1])
 	else:
 		sys.exit("Error : you must provide a list of cities in the parameter\n \
 rossier_fort.py <cities file>\n \
 Parameters : \n \
-	--no-gui : start without the GUI\n \
-	--max-time <time in ms>: how long should the algorithm run \n \
+	--nogui : start without the GUI\n \
+	--maxtime <time in ms>: how long should the algorithm run \n \
 ")
 	try:
 		ga_solve(file,gui,maxtime)
