@@ -76,7 +76,7 @@ def equals(individualA,individualB):
 
 # une liste d'objet City
 cities=[]
-# représente la nombre d'individu dans la population
+# représente la nombre d'individus dans la population
 N=2000
 # représente la population total
 population=[]
@@ -239,7 +239,7 @@ def mutate():
 	indices = list(range(0,len(intermediatePopulation)))
 	random.shuffle(indices)
 
-	# mutation dans 1% des cas
+	# mutation dans 10% des cas
 	for i in indices[:int(len(intermediatePopulation)/10)]:
 		individual = intermediatePopulation[i]
 		# récupération du voyage
@@ -320,7 +320,7 @@ def ga_solve(file=None,gui=True,maxtime=0):
 		sorted_pop = sorted(population, key=lambda individual: individual.distance)
 		elite = sorted_pop[0]
 		
-		# Test si l'élite revient 20x de suite
+		# Test si l'élite revient 100x de suite
 		numberOfApparition=100
 		if previousElite is not None:
 			# si le elite courant est identique à l'élite précédent
