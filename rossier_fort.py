@@ -8,7 +8,7 @@ import pygame
 import time
 from pygame.locals import KEYDOWN, QUIT, MOUSEBUTTONDOWN, K_RETURN, K_ESCAPE
 from datetime import datetime
-from math import sqrt, pow
+from math import hypot
 
 class City(object):
 	def __init__(self,name,x,y):
@@ -34,7 +34,7 @@ class Individual(object):
 			yb=cities[self.travel[i+1]].y
 			
 			# distance entre deux villes (AB)
-			self.distance+=sqrt(pow(xb-xa,2)+pow(yb-ya,2))
+			self.distance+=hypot(xb-xa,yb-ya)
 		
 		# revenir au point de départ à la fin
 		xa=cities[self.travel[-1]].x
@@ -42,7 +42,7 @@ class Individual(object):
 		xb=cities[self.travel[0]].x
 		yb=cities[self.travel[0]].y
 		
-		self.distance+=sqrt(pow(xb-xa,2)+pow(yb-ya,2))
+		self.distance+=hypot(xb-xa,yb-ya)
 
 	def __str__(self):
 		return str(self.travel)
@@ -65,7 +65,7 @@ def equals(individualA,individualB):
 # une liste d'objet City
 cities=[]
 
-N=1024
+N=100
 population=[]
 intermediatePopulation=[]
 
@@ -136,10 +136,17 @@ def select():
 	# Tri de la liste, individus ayant la distance la plus courte en premier.
 	sorted_pop = sorted(population, key=lambda individual: individual.distance)
 
+	half_point = len(sorted_pop)/2
+	curr = 0
+	selected_pop = []
+#
+	while (len(selected_pop) < half_point):
+		selected_pop.append(sorted_pop[curr])
+		curr = curr + random.randint(1,2)
 
 	# On créé un tableau avec la meilleure moitié de la population
-	besthalf_pop = sorted_pop[:int(len(sorted_pop)/2)]
-	for i in besthalf_pop:
+	#selected_pop = sorted_pop[:int(len(sorted_pop)/2)]
+	for i in selected_pop:
 		intermediatePopulation.append(i)
 
 
@@ -195,7 +202,7 @@ def mutate():
 	indices = list(range(0,len(intermediatePopulation)))
 	random.shuffle(indices)
 
-	for i in indices[:int(len(intermediatePopulation)/10)]:
+	for i in indices[:int(len(intermediatePopulation)/100)]:
 		individual = intermediatePopulation[i]
 		# récupération du voyage
 		travel=individual.travel
@@ -233,6 +240,7 @@ def ga_solve(file=None,gui=True,maxtime=0):
 	
 	# mémorise le meilleur individu précédent
 	previousElite=None
+	elite = None
 	# compteur incrémenté si l'élite revient plusieurs fois de suite
 	previousEliteCounter=0
 	
@@ -301,6 +309,8 @@ def ga_solve(file=None,gui=True,maxtime=0):
 	
 		if not flag:
 			break
+	
+	return elite.distance, [cities[i].name for i in elite.travel]
 
 if __name__=="__main__":
 	file=None
@@ -329,7 +339,7 @@ Parameters : \n \
 			population[0]
 			sys.exit("Elite at stop time : ", population[0])
 		except:
-			sys.exit("Tits")
+			sys.exit("Exited")
 
 	
 	print("file %s"%file)
