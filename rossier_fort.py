@@ -55,17 +55,18 @@ class Individual(object):
 
 # Test si deux individus sont identiques
 def equals(individualA,individualB):
-	individualTravelA=individualA.travel
-	individualTravelB=individualB.travel
-	for cityA,cityB in zip(individualTravelA,individualTravelB):
-		if cityA!=cityB:
-			return False
-	return True
+	individualTravelA=individualA.distance
+	individualTravelB=individualB.distance
+	# for cityA,cityB in zip(individualTravelA,individualTravelB):
+		# if cityA!=cityB:
+			# return False
+	# return True
+	return int(individualTravelA)==int(individualTravelB)
 
 # une liste d'objet City
 cities=[]
 
-N=1024
+N=3000
 population=[]
 intermediatePopulation=[]
 
@@ -265,16 +266,17 @@ def ga_solve(file=None,gui=True,maxtime=0):
 		elite = sorted_pop[0]
 		
 		print("elite[0] %s %s"%(str(sorted_pop[0].distance),str(sorted_pop[0].travel)))
-		print("elite[-1] %s",str(sorted_pop[-1].distance))
+		# print("elite[-1] %s",str(sorted_pop[-1].distance))
 		
 		# print("previousEliteCounter: %d",previousEliteCounter)
 		
-		# Test si l'élite revient 10x de suite
+		# Test si l'élite revient 20x de suite
 		if previousElite is not None:
 			if equals(elite,previousElite):
 				previousEliteCounter+=1
 				
-				if previousEliteCounter>99:
+				print("Counter: %d", previousEliteCounter)
+				if previousEliteCounter>20:
 					flag=False
 			else:
 				previousEliteCounter=0
